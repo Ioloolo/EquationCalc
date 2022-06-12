@@ -58,4 +58,27 @@ int *divideRoot(int d) {
 	return result;
 }
 
+int *dividePolynomial(int *coefficients, int r) {
+	int p[4];
+	int q[3];
+	
+	int *result = (int *) malloc(sizeof(int) * 5);
+	
+	for (int i = 0; i < 5; i++)
+		result[i] = 0;
+	
+	for (int i = 0; i < 4; i++)
+		p[i] = coefficients[3-i];
+
+    q[0] = p[0];
+    
+    for (int i = 0; i < 3; i++)
+        q[i] = (q[i-1]*r)+p[i];
+    
+    for (int i = 0; i < 3; i++)
+    	result[i] = q[2-i];
+        
+    return result;
+}
+
 #endif //_EQUATION_CALC_UTIL_EQUATION_HEADER_

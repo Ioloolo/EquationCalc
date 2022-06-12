@@ -31,8 +31,9 @@ void printError(String string) {
 
     printf("                      ┌─────────────────────────┐\n");
     printf("                      │   오류가 발생했습니다   │\n");
-    printf("   =──────────────────┴─────────────────────────┴──────────────────=\n");
+    printf("   =──────────────────┴─────────────────────────┴──────────────────=\n\n");
     printf("      %s", string.string);
+   	printf("\n\n\n"); 
 
     exit(0);
 }
@@ -41,7 +42,7 @@ void printInputForm() {
     printCommonForm(stringFrom(""));
 
     printf("\n");
-    printf("    $ 1차 방정식부터 4차 방정식까지 계산 가능합니다.\n");
+    printf("    $ 1차 방정식부터 3차 방정식까지 계산 가능합니다.\n");
     printf("    $ 다항식의 연산은 불가능하므로, 연산 후 입력해주세요.\n");
     printf("    $ 마지막은 '=0'을 입력해주세요.\n");
     printf("\n");
@@ -50,6 +51,9 @@ void printInputForm() {
 }
 
 void printSolution(Solution solution) {
+	if (solution.equation.degree < 1 || solution.equation.degree > 3)
+		printError(stringFrom("1~3차 방정식만 풀 수 있습니다."));
+	
     printCommonForm(solution.equation.oe);
     printf("\n");
     printf("                        ┌───────────────────┐\n");
@@ -63,7 +67,6 @@ void printSolution(Solution solution) {
     
     	while ((ptr = strtok(NULL, "$")) != NULL) {
 			printf("           %s\n", ptr);
-    		ptr = strtok(NULL, "$");
 		}
 		
 		printf("\n");

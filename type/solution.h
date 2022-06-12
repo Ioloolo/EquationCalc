@@ -30,7 +30,6 @@ void solve  (Solution *); // solve equation
 void solve1D(Solution *); // solve equation of 1 degree
 void solve2D(Solution *); // solve equation of 2 degree
 void solve3D(Solution *); // solve equation of 3 degree
-void solve4D(Solution *); // solve equation of 4 degree
 
 // define constructor
 Solution solutionFrom(Equation equation) {
@@ -66,9 +65,6 @@ void solve(Solution *this) {
             break;
         case 3:
             solve3D(this);
-            break;
-        case 4:
-            solve4D(this);
             break;
     }
 }
@@ -125,7 +121,7 @@ void solve2D(Solution *this) {
     	coefficients[1] *= -1;
     	coefficients[0] *= -1;
     	this->equation.refreshEquationString(&this->equation);
-    	sprintf(tmp, "%s$2각 항에 -1을 곱해주세요.",
+    	sprintf(tmp, "%s$각 항에 -1을 곱해주세요.",
 			this->equation.equation.string);
 		this->solution[++(this->step)] = stringFrom(tmp);
 	}
@@ -240,9 +236,7 @@ void solve2D(Solution *this) {
 				}
 			}
 		}
-	} 
-	
-	if (this->nor == 1) {
+	} else if (this->nor == 1) {
     	int half = coefficients[1] / 2;
     		
     	sprintf(tmp, "%d%s%d$1차항 계수의 절반의 제곱이 상수항과 같은지 확인합니다.",
@@ -263,53 +257,67 @@ void solve2D(Solution *this) {
 		this->solution[++(this->step)] = stringFrom(tmp);
 		
 		sprintf(this->answer[0].string, "%d", -(coefficients[1]/2));
-	} 
-	
-	if (this->nor == 0) {
+	} else if (this->nor == 0) {
 		// 판별식을 구함. (근의 공식 사용 목적) 
 		int *d = divideRoot(abs(pow(coefficients[1], 2) - 4*coefficients[2]*coefficients[0]));
 		
 		sprintf(tmp, "근의 공식을 사용하여 해를 구합니다.");
 		this->solution[++(this->step)] = stringFrom(tmp);
 		
-		// 분모(2)로 나뉜다면 나누고, 루트 앞 계수가 1이라면 생략하여 저장 
-		if (d[0] > 1) {
+		// 분모(2)로 나뉜다면 나누고, 루트 앞 계수가 1이라면 생략하여 저장
+		if (d[1] == 0) {
 			if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[0]/2.0 - d[0]/2 == 0) {
-				if (d[0]/2 > 1) {
-					sprintf(this->answer[0].string, "%d+%d√%di", -coefficients[1]/2, d[0]/2, d[1]);
-					sprintf(this->answer[1].string, "%d-%d√%di", -coefficients[1]/2, d[0]/2, d[1]);
-				} else {
-					sprintf(this->answer[0].string, "%d+√%di", -coefficients[1]/2, d[1]);
-					sprintf(this->answer[1].string, "%d-√%di", -coefficients[1]/2, d[1]);
-				}
+				sprintf(this->answer[0].string, "%d+%di", -coefficients[1]/2, d[0]/2);
+				sprintf(this->answer[1].string, "%d-%di", -coefficients[1]/2, d[0]/2);
 			} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
-				sprintf(this->answer[0].string, "%d+((%d√%di)/2)", -coefficients[1]/2, d[0], d[1]);
-				sprintf(this->answer[1].string, "%d-((%d√%di)/2)", -coefficients[1]/2, d[0], d[1]);
+				sprintf(this->answer[0].string, "%d+((%di)/2)", -coefficients[1]/2, d[0]);
+				sprintf(this->answer[1].string, "%d-((%di)/2)", -coefficients[1]/2, d[0]);
 			} else if (d[0]/2.0 - d[0]/2 == 0) {
-				if (d[0]/2 > 1) {
-					sprintf(this->answer[0].string, "(%d/2)+%d√%di", -coefficients[1], d[0]/2, d[1]);
-					sprintf(this->answer[1].string, "(%d/2)-%d√%di", -coefficients[1], d[0]/2, d[1]);
-				} else {
-					sprintf(this->answer[0].string, "(%d/2)+√%di", -coefficients[1], d[1]);
-					sprintf(this->answer[1].string, "(%d/2)-√%di", -coefficients[1], d[1]);
-				}
+				sprintf(this->answer[0].string, "(%d/2)+%di", -coefficients[1], d[0]/2);
+				sprintf(this->answer[1].string, "(%d/2)-%di", -coefficients[1], d[0]/2);
 			} else {
-				sprintf(this->answer[0].string, "(%d+%d√%di)/2", -coefficients[1], d[0], d[1]);
-				sprintf(this->answer[1].string, "(%d-%d√%di)/2", -coefficients[1], d[0], d[1]);
+				sprintf(this->answer[0].string, "(%d+%di)/2", -coefficients[1], d[0]);
+				sprintf(this->answer[1].string, "(%d-%di)/2", -coefficients[1], d[0]);
 			}
 		} else {
-			if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[1]/4.0 - d[1]/4 == 0) {
-				sprintf(this->answer[0].string, "%d+√%di", -coefficients[1]/2, d[1]/4);
-				sprintf(this->answer[1].string, "%d-√%di", -coefficients[1]/2, d[1]/4);
-			} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
-				sprintf(this->answer[0].string, "%d+((√%di)/2)", -coefficients[1]/2, d[1]);
-				sprintf(this->answer[1].string, "%d-((√%di)/2)", -coefficients[1]/2, d[1]);
-			} else if (d[0]/2.0 - d[0]/2 == 0) {
-				sprintf(this->answer[0].string, "(%d/2)+√%di", -coefficients[1], d[1]/4);
-				sprintf(this->answer[1].string, "(%d/2)-√%di", -coefficients[1], d[1]/4);
+			if (d[0] > 1) {
+				if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[0]/2.0 - d[0]/2 == 0) {
+					if (d[0]/2 > 1) {
+						sprintf(this->answer[0].string, "%d+%d√%di", -coefficients[1]/2, d[0]/2, d[1]);
+						sprintf(this->answer[1].string, "%d-%d√%di", -coefficients[1]/2, d[0]/2, d[1]);
+					} else {
+						sprintf(this->answer[0].string, "%d+√%di", -coefficients[1]/2, d[1]);
+						sprintf(this->answer[1].string, "%d-√%di", -coefficients[1]/2, d[1]);
+					}
+				} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
+					sprintf(this->answer[0].string, "%d+((%d√%di)/2)", -coefficients[1]/2, d[0], d[1]);
+					sprintf(this->answer[1].string, "%d-((%d√%di)/2)", -coefficients[1]/2, d[0], d[1]);
+				} else if (d[0]/2.0 - d[0]/2 == 0) {
+					if (d[0]/2 > 1) {
+						sprintf(this->answer[0].string, "(%d/2)+%d√%di", -coefficients[1], d[0]/2, d[1]);
+						sprintf(this->answer[1].string, "(%d/2)-%d√%di", -coefficients[1], d[0]/2, d[1]);
+					} else {
+						sprintf(this->answer[0].string, "(%d/2)+√%di", -coefficients[1], d[1]);
+						sprintf(this->answer[1].string, "(%d/2)-√%di", -coefficients[1], d[1]);
+					}
+				} else {
+					sprintf(this->answer[0].string, "(%d+%d√%di)/2", -coefficients[1], d[0], d[1]);
+					sprintf(this->answer[1].string, "(%d-%d√%di)/2", -coefficients[1], d[0], d[1]);
+				}
 			} else {
-				sprintf(this->answer[0].string, "(%d+√%di)/2", -coefficients[1], d[1]);
-				sprintf(this->answer[1].string, "(%d-√%di)/2", -coefficients[1], d[1]);
+				if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[1]/4.0 - d[1]/4 == 0) {
+					sprintf(this->answer[0].string, "%d+√%di", -coefficients[1]/2, d[1]/4);
+					sprintf(this->answer[1].string, "%d-√%di", -coefficients[1]/2, d[1]/4);
+				} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
+					sprintf(this->answer[0].string, "%d+((√%di)/2)", -coefficients[1]/2, d[1]);
+					sprintf(this->answer[1].string, "%d-((√%di)/2)", -coefficients[1]/2, d[1]);
+				} else if (d[0]/2.0 - d[0]/2 == 0) {
+					sprintf(this->answer[0].string, "(%d/2)+√%di", -coefficients[1], d[1]/4);
+					sprintf(this->answer[1].string, "(%d/2)-√%di", -coefficients[1], d[1]/4);
+				} else {
+					sprintf(this->answer[0].string, "(%d+√%di)/2", -coefficients[1], d[1]);
+					sprintf(this->answer[1].string, "(%d-√%di)/2", -coefficients[1], d[1]);
+				}
 			}
 		}
 		
@@ -318,10 +326,93 @@ void solve2D(Solution *this) {
 }
 
 void solve3D(Solution *this) {
+	int  *coefficients = this->equation.coefficients;
+    char *tmp          = (char *) malloc(sizeof(char) * 150);
+    
+	int alpha = 99;
+	int a[4]  = {coefficients[3],};
 	
-}
-
-void solve4D(Solution *this) {
+	// 3차항 계수가 음수라면 , 양수로 
+	if (coefficients[3] < 0) {
+		coefficients[3] *= -1; 
+    	coefficients[2] *= -1;
+    	coefficients[1] *= -1;
+    	coefficients[0] *= -1;
+    	this->equation.refreshEquationString(&this->equation);
+    	sprintf(tmp, "%s$각 항에 -1을 곱해주세요.",
+			this->equation.equation.string);
+		this->solution[++(this->step)] = stringFrom(tmp);
+	}
+    
+    // 3차항 계수가 1이 아니고, 3차항 계수로 나눌 수 있다면 나눔. 
+    if (coefficients[3] != 1) {
+    	if ((float) coefficients[2] / coefficients[3] - coefficients[2] / coefficients[3] == 0 &&
+			(float) coefficients[1] / coefficients[3] - coefficients[1] / coefficients[3] == 0 &&
+			(float) coefficients[0] / coefficients[3] - coefficients[0] / coefficients[3] == 0) {
+				int o3d = coefficients[3];
+				coefficients[2] /= coefficients[3];
+    			coefficients[1] /= coefficients[3];
+    			coefficients[0] /= coefficients[3];
+    			coefficients[3] = 1;
+    			this->equation.refreshEquationString(&this->equation);
+    			sprintf(tmp, "%s$3차항의 계수(%d)를 각 항에 나눠주세요.",
+					this->equation.equation.string,
+					o3d);
+				this->solution[++(this->step)] = stringFrom(tmp);
+		}
+	}
+	
+	// 인수 찾기 
+	for (int i = -15; i <= 15; i++) {
+		if (i == 0) continue;
+		
+		printf("%d ", i);
+		
+		if (coefficients[3]*pow(i, 3) + coefficients[2]*pow(i, 2) + coefficients[1]*i + coefficients[0] == 0) {
+			alpha = i;
+			break;
+		}
+	}
+	
+	if (alpha != 99) {
+		// 0이 되는 값 발견 시 조립제법 사용 
+		sprintf(tmp, "%d%c%d%c%d%c%d=0 (x=%d)$식이 0이 되는 값을 찾습니다.",
+				(int) coefficients[3]*pow(alpha, 3),
+				coefficients[2]*pow(alpha, 2) >= 0 ? '+' : '-', abs(coefficients[2]*pow(alpha, 2)),
+				coefficients[1]*alpha >= 0 ? '+' : '-', abs(coefficients[1]*alpha),
+				coefficients[0]*alpha >= 0 ? '+' : '-', abs(coefficients[0]*alpha),
+				alpha);
+		this->solution[++(this->step)] = stringFrom(tmp);
+		
+		// 인수 분해 
+		Equation newEq = equationFromCoefficients(dividePolynomial(coefficients, alpha));
+		
+		sprintf(tmp, "(x%c%d)(%s)=0",
+				alpha > 0 ? '-' : '+', abs(alpha), strtok(newEq.equation.string, "="));
+		this->solution[++(this->step)] = stringFrom(tmp);
+		
+		// 2차 방정식 풀이
+		sprintf(tmp, "이차 방정식 %s 의 근을 구합니다.",
+				newEq.equation.string);
+		this->solution[++(this->step)] = stringFrom(tmp);
+		
+		Solution solution = solutionFrom(newEq);
+	    solution.solve(&solution);
+	    
+	    for (int i = 1; i <= solution.step; i++)
+	    	this->solution[++(this->step)] = stringFrom(solution.solution[i].string);
+	    	
+		sprintf(this->answer[0].string, "%d", alpha);
+		this->answer[1] = solution.answer[0];
+		this->answer[2] = solution.answer[1];
+		
+		this->nor = 3;
+	} else {
+		sprintf(tmp, "근을 찾을 수 없습니다.");
+		this->solution[++(this->step)] = stringFrom(tmp);
+		
+		this->nor = 0; 
+	}
 }
 
 #endif //_EQUATION_CALC_TYPE_SOLUTION_HEADER_
