@@ -181,9 +181,68 @@ void solve2D(Solution *this) {
 			 
 			 this->solution[++(this->step)] = stringFrom(tmp);
 		} else {
-			// 인수 분해 구현 가능..? 
+			double alpha = (-coefficients[1] + sqrt(pow(coefficients[1], 2) - 4*coefficients[2]*coefficients[0])) / (2 * coefficients[2]);
+			double beta = (-coefficients[1] - sqrt(pow(coefficients[1], 2) - 4*coefficients[2]*coefficients[0])) / (2 * coefficients[2]);
+			
+			if (alpha - (int) alpha == 0 && beta - (int) beta == 0) {
+				sprintf(tmp, "(x%c%d)(x%c%d)=0$인수분해를 합니다.",
+						alpha > 0 ? '-' : '+', abs(alpha),
+						beta > 0 ? '-' : '+', abs(beta));
+				this->solution[++(this->step)] = stringFrom(tmp);
+				
+				sprintf(this->answer[0].string, "%d", (int) alpha);
+				sprintf(this->answer[1].string, "%d", (int) beta);
+			} else {
+				int *d = divideRoot(abs(pow(coefficients[1], 2) - 4*coefficients[2]*coefficients[0]));
+		
+				sprintf(tmp, "근의 공식을 사용하여 해를 구합니다.");
+				this->solution[++(this->step)] = stringFrom(tmp);
+				
+				// 분모(2)로 나뉜다면 나누고, 루트 앞 계수가 1이라면 생략하여 저장 
+				if (d[0] > 1) {
+					if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[0]/2.0 - d[0]/2 == 0) {
+						if (d[0]/2 > 1) {
+							sprintf(this->answer[0].string, "%d+%d√%d", -coefficients[1]/2, d[0]/2, d[1]);
+							sprintf(this->answer[1].string, "%d-%d√%d", -coefficients[1]/2, d[0]/2, d[1]);
+						} else {
+							sprintf(this->answer[0].string, "%d+√%d", -coefficients[1]/2, d[1]);
+							sprintf(this->answer[1].string, "%d-√%d", -coefficients[1]/2, d[1]);
+						}
+					} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
+						sprintf(this->answer[0].string, "%d+((%d√%d)/2)", -coefficients[1]/2, d[0], d[1]);
+						sprintf(this->answer[1].string, "%d-((%d√%d)/2)", -coefficients[1]/2, d[0], d[1]);
+					} else if (d[0]/2.0 - d[0]/2 == 0) {
+						if (d[0]/2 > 1) {
+							sprintf(this->answer[0].string, "(%d/2)+%d√%d", -coefficients[1], d[0]/2, d[1]);
+							sprintf(this->answer[1].string, "(%d/2)-%d√%d", -coefficients[1], d[0]/2, d[1]);
+						} else {
+							sprintf(this->answer[0].string, "(%d/2)+√%d", -coefficients[1], d[1]);
+							sprintf(this->answer[1].string, "(%d/2)-√%d", -coefficients[1], d[1]);
+						}
+					} else {
+						sprintf(this->answer[0].string, "(%d+%d√%d)/2", -coefficients[1], d[0], d[1]);
+						sprintf(this->answer[1].string, "(%d-%d√%d)/2", -coefficients[1], d[0], d[1]);
+					}
+				} else {
+					if (coefficients[1]/2.0 - coefficients[1]/2 == 0 && d[1]/4.0 - d[1]/4 == 0) {
+						sprintf(this->answer[0].string, "%d+√%d", -coefficients[1]/2, d[1]/4);
+						sprintf(this->answer[1].string, "%d-√%d", -coefficients[1]/2, d[1]/4);
+					} else if (coefficients[1]/2.0 - coefficients[1]/2 == 0) {
+						sprintf(this->answer[0].string, "%d+((√%d)/2)", -coefficients[1]/2, d[1]);
+						sprintf(this->answer[1].string, "%d-((√%d)/2)", -coefficients[1]/2, d[1]);
+					} else if (d[0]/2.0 - d[0]/2 == 0) {
+						sprintf(this->answer[0].string, "(%d/2)+√%d", -coefficients[1], d[1]/4);
+						sprintf(this->answer[1].string, "(%d/2)-√%d", -coefficients[1], d[1]/4);
+					} else {
+						sprintf(this->answer[0].string, "(%d+√%d)/2", -coefficients[1], d[1]);
+						sprintf(this->answer[1].string, "(%d-√%d)/2", -coefficients[1], d[1]);
+					}
+				}
+			}
 		}
-	} else if (this->nor == 1) {
+	} 
+	
+	if (this->nor == 1) {
     	int half = coefficients[1] / 2;
     		
     	sprintf(tmp, "%d%s%d$1차항 계수의 절반의 제곱이 상수항과 같은지 확인합니다.",
@@ -204,7 +263,9 @@ void solve2D(Solution *this) {
 		this->solution[++(this->step)] = stringFrom(tmp);
 		
 		sprintf(this->answer[0].string, "%d", -(coefficients[1]/2));
-	} else if (this->nor == 0) {
+	} 
+	
+	if (this->nor == 0) {
 		// 판별식을 구함. (근의 공식 사용 목적) 
 		int *d = divideRoot(abs(pow(coefficients[1], 2) - 4*coefficients[2]*coefficients[0]));
 		
@@ -257,6 +318,7 @@ void solve2D(Solution *this) {
 }
 
 void solve3D(Solution *this) {
+	
 }
 
 void solve4D(Solution *this) {
